@@ -1,21 +1,18 @@
-const puppeteer = require('puppeteer');
+const Page = require('./helpers/Page');
 
-let browser, page
+let page;
 
 beforeEach(async () => {
-  browser = await puppeteer.launch({
-    headless: false,
-  });
-  page = await browser.newPage();
+  page = await Page.build();
   await page.goto('localhost:3000');
 });
 
 afterEach(async () => {
-  await browser.close()
+  await page.close()
 })
 
 test('The header has the correct text', async () => {
-  const text = await page.$eval('a.left.brand-logo', (el) => el.innerHTML);
+  const text = await page.getContentsOf('a.left.brand-logo');
 
   expect(text).toEqual('Blogster');
 });
@@ -28,33 +25,9 @@ test('Clicking login starts OAuth flow', async () => {
 });
 
 test('When signed in, shows logout button', async () => {
-  const id = '5d261640a7ff580caae13f4a';
+  await page.login();
 
-  const Buffer = require('safe-buffer').Buffer;
-  const sessionObject = {
-    passport: {
-      user: id
-    }
-  };
-  const sessionString = Buffer.from(JSON.stringify(sessionObject))
-    .toString('base64');
-
-  const Keygrip = require('keygrip');
-  const keys = require('../config/keys');
-  const keygrip = new Keygrip([keys.cookieKey]);
-  const sig = keygrip.sign('session=' + sessionString);
-
-  await page.setCookie({
-    name: 'session',
-    value: sessionString
-  });
-  await page.setCookie({
-    name: 'session.sig',
-    value: sig
-  });
-  await page.goto('localhost:3000', { waitUntil: 'domcontentloaded' });
-
-  const logout = await page.$eval('a[href="/auth/logout"]', (el) => el.innerHTML);
+  const logout = await page.getContentsOf('a[href="/auth/logout"]');
 
   expect(logout).toEqual('Logout');
 });
