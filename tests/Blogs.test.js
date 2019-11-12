@@ -61,3 +61,28 @@ describe('When logged in', async () => {
     });
   });
 });
+
+describe('User is not logged in', () => {
+  const actions = [
+    {
+      method: 'get',
+      path: 'api/blogs',
+    },
+    {
+      method: 'post',
+      path: 'api/blogs',
+      body: {
+        title: 'My title',
+        content: 'My content',
+      },
+    },
+  ];
+
+  test('Blog related action are prohibited', async () => {
+    const results = await page.executeRequests(actions);
+    
+    for(let result of results) {
+      expect(result).toEqual({ error: 'You must log in!'});
+    }
+  });
+});
