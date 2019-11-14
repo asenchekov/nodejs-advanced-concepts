@@ -9,8 +9,7 @@ class BlogShow extends Component {
 
   renderImage() {
     if (this.props.blog.imageUrl) {
-      return <img src={this.props.blog.imageUrl} width="500" />
-
+      return <img src={this.props.blog.imageUrl} alt="" width="500" />
     }
   }
 
