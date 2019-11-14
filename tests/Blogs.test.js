@@ -17,7 +17,7 @@ describe('When logged in', async () => {
     await page.click('a[href="/blogs/new"]');
   });
 
-  test('can see add blog form', async () => {  
+  test('can see add blog form', async () => {
     const label = await page.getContentsOf('form label');
   
     expect(label).toEqual('Blog Title');
